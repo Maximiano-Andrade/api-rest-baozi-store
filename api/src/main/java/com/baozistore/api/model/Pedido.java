@@ -30,14 +30,12 @@ public class Pedido {
     public Pedido() {
     }
     
-    
 	public Pedido(Long id, Cliente cliente, Produto produto, Integer quantidade) {
 		this.id = id;
 		this.cliente = cliente;
 		this.produto = produto;
 		this.quantidade = quantidade;
 	}
-
 
 	public Long getId() {
 		return id;
