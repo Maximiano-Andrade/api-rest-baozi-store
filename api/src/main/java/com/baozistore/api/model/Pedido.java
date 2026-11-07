@@ -4,27 +4,40 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 
 @Entity
+@Table(name = "pedidos")
 public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "produto_id", nullable = false)
+    private Produto produto;
+    
     private Integer quantidade;
-    private Long clienteid;
-    private Long produtoid;
 
     public Pedido() {
     }
-
-	public Pedido(Long id, Integer quantidade, Long clientid, Long produtoid) {
+    
+    
+	public Pedido(Long id, Cliente cliente, Produto produto, Integer quantidade) {
 		this.id = id;
+		this.cliente = cliente;
+		this.produto = produto;
 		this.quantidade = quantidade;
-		this.clienteid = clientid;
-		this.produtoid = produtoid;
 	}
+
 
 	public Long getId() {
 		return id;
@@ -34,6 +47,22 @@ public class Pedido {
 		this.id = id;
 	}
 
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
+
+	public Produto getProduto() {
+		return produto;
+	}
+
+	public void setProduto(Produto produto) {
+		this.produto = produto;
+	}
+
 	public Integer getQuantidade() {
 		return quantidade;
 	}
@@ -41,23 +70,7 @@ public class Pedido {
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
 	}
-
-	public Long getClienteid() {
-		return clienteid;
-	}
-
-	public void setClienteid(Long clientid) {
-		this.clienteid = clientid;
-	}
-
-	public Long getProdutoid() {
-		return produtoid;
-	}
-
-	public void setProdutoid(Long produtoid) {
-		this.produtoid = produtoid;
-	}
     
     
-  
+    
 }
