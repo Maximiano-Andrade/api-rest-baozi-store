@@ -25,8 +25,7 @@ public class PedidoController {
 	private ClienteRepository clienteRepository;
 	private ProdutoRepository produtoRepository;
 
-	PedidoController(PedidoRepository pedidoRepository, ClienteRepository clienteRepository,
-			ProdutoRepository produtoRepository) {
+	PedidoController(PedidoRepository pedidoRepository, ClienteRepository clienteRepository, ProdutoRepository produtoRepository) {
 		this.pedidoRepository = pedidoRepository;
 		this.clienteRepository = clienteRepository;
 		this.produtoRepository = produtoRepository;
@@ -34,15 +33,14 @@ public class PedidoController {
 
 	@PostMapping
 	public ResponseEntity<Object> create(@RequestBody Pedido pedido) {
-		// 1. Valida se o cliente foi informado e se existe no banco
+		
 		if (pedido.getCliente() == null || pedido.getCliente().getId() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O ID do cliente é obrigatório.");
 		}
 		if (!clienteRepository.existsById(pedido.getCliente().getId())) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado com o ID informado.");
 		}
-
-		// 2. Valida se o produto foi informado e se existe no banco
+		
 		if (pedido.getProduto() == null || pedido.getProduto().getId() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O ID do produto é obrigatório.");
 		}
@@ -50,12 +48,10 @@ public class PedidoController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado com o ID informado.");
 		}
 
-		// 3. Valida a quantidade
 		if (pedido.getQuantidade() == null || pedido.getQuantidade() <= 0) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A quantidade deve ser maior que zero.");
 		}
 
-		// Se passar por todas as validações, salva o pedido
 		Pedido novoPedido = pedidoRepository.save(pedido);
 		return ResponseEntity.status(HttpStatus.CREATED).body(novoPedido);
 	}
