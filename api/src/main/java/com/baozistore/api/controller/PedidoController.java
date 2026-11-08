@@ -60,24 +60,30 @@ public class PedidoController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(novoPedido);
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Pedido> buscarPedidoPorId(@PathVariable Long id) {
+	@GetMapping(path = "/{id}")
+	public ResponseEntity<?> getPedido(@PathVariable Long id) {
 		Optional<Pedido> pedido = pedidoRepository.findById(id);
-		return pedido.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+		if (pedido.isPresent()) {
+			return ResponseEntity.ok(pedido.get());
+		}
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedidp não encontrado!");
 	}
 
 	@GetMapping
-	public List<Pedido> listarPedidos() {
+	public List<Pedido> listar() {
 		return pedidoRepository.findAll();
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletarPedido(@PathVariable Long id) {
-		if (pedidoRepository.existsById(id)) {
-			pedidoRepository.deleteById(id);
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.notFound().build();
+	@DeleteMapping(path = "/{id}")
+	public ResponseEntity<?> delete(@PathVariable Long id) {
+	    if (!pedidoRepository.existsById(id)) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido não encontrado!");
+	    }
+	    
+	    pedidoRepository.deleteById(id);
+	    return ResponseEntity.ok().build();
 	}
 
 }

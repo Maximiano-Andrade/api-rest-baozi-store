@@ -2,6 +2,7 @@ package com.baozistore.api.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +25,21 @@ public class ClienteController {
 	}
 
 	@PostMapping
-	public Cliente create(@RequestBody Cliente cliente) {
-		return repository.save(cliente);
+	public ResponseEntity<Object> create(@RequestBody Cliente cliente) {
+		if (cliente.getNome() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome do usuario é obrigratório.");
+		}
+
+		Cliente novoCliente = repository.save(cliente);
+		return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<?> getCliente(@PathVariable long id) {
+	public ResponseEntity<?> getCliente(@PathVariable Long id) {
+		if(!repository.existsById(id)){
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+		}
+		
 		return repository.findById(id).map(record -> ResponseEntity.ok().body(record))
 				.orElse(ResponseEntity.notFound().build());
 	}
@@ -40,11 +50,13 @@ public class ClienteController {
 	}
 
 	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<?> delete(@PathVariable long id) {
-		return repository.findById(id).map(record -> {
-			repository.deleteById(id);
-			return ResponseEntity.ok().build();
-		}).orElse(ResponseEntity.notFound().build());
+	public ResponseEntity<?> delete(@PathVariable Long id) {
+	    if (!repository.existsById(id)) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
+	    }
+	    
+	    repository.deleteById(id);
+	    return ResponseEntity.ok().build();
 	}
 
 }
